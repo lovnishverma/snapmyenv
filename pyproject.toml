@@ -40,10 +40,10 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/yourusername/snapmyenv"
-Documentation = "https://github.com/yourusername/snapmyenv#readme"
-Repository = "https://github.com/yourusername/snapmyenv"
-"Bug Tracker" = "https://github.com/yourusername/snapmyenv/issues"
+Homepage = "https://github.com/lovnishverma/snapmyenv"
+Documentation = "https://github.com/lovnishverma/snapmyenv#readme"
+Repository = "https://github.com/lovnishverma/snapmyenv"
+"Bug Tracker" = "https://github.com/lovnishverma/snapmyenv/issues"
 
 [tool.setuptools.packages.find]
 where = ["."]
