@@ -1,5 +1,5 @@
 """
-snapenv - Snapshot and restore Python environments for reproducible notebooks.
+snapmyenv - Snapshot and restore Python environments for reproducible notebooks.
 
 A lightweight library for Google Colab and Jupyter users to capture and restore
 runtime environments, making notebooks fully reproducible.
@@ -18,16 +18,16 @@ Public API:
         Restore environment from notebook-embedded snapshot.
 
 Example:
-    >>> import snapenv
+    >>> import snapmyenv
     >>> 
     >>> # Capture current environment
-    >>> snapshot = snapenv.capture("my-project")
+    >>> snapshot = snapmyenv.capture("my-project")
     >>> 
     >>> # Later, or on another machine...
-    >>> snapenv.restore("my-project")
+    >>> snapmyenv.restore("my-project")
     >>> 
     >>> # Make notebook self-reproducible
-    >>> snapenv.embed("my-project", "analysis.ipynb")
+    >>> snapmyenv.embed("my-project", "analysis.ipynb")
 """
 
 from .__version__ import __version__, __author__, __license__
@@ -35,7 +35,7 @@ from .capture import capture
 from .restore import restore
 from .notebook import embed, restore_from_nb
 from .exceptions import (
-    SnapenvError,
+    snapmyenvError,
     CaptureError,
     RestoreError,
     NotebookError,
@@ -56,7 +56,7 @@ __all__ = [
     "restore_from_nb",
     
     # Exceptions
-    "SnapenvError",
+    "snapmyenvError",
     "CaptureError",
     "RestoreError",
     "NotebookError",
@@ -70,12 +70,12 @@ def _show_welcome():
     try:
         from .colab import is_jupyter
         if is_jupyter():
-            print(f"snapenv v{__version__} loaded")
+            print(f"snapmyenv v{__version__} loaded")
             print("Quick start:")
-            print("  snapenv.capture()        - Snapshot current environment")
-            print("  snapenv.restore()        - Restore environment")
-            print("  snapenv.embed()          - Embed in notebook metadata")
-            print("  snapenv.restore_from_nb() - Restore from notebook")
+            print("  snapmyenv.capture()        - Snapshot current environment")
+            print("  snapmyenv.restore()        - Restore environment")
+            print("  snapmyenv.embed()          - Embed in notebook metadata")
+            print("  snapmyenv.restore_from_nb() - Restore from notebook")
     except:
         pass
 
