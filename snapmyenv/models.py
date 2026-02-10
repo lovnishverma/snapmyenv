@@ -43,7 +43,7 @@ class EnvironmentSnapshot:
     is_colab: bool
     packages: List[Package]
     timestamp: str
-    snapenv_version: str
+    snapmyenv_version: str
     metadata: Dict[str, str] = field(default_factory=dict)
     
     def __post_init__(self):
@@ -66,7 +66,7 @@ class EnvironmentSnapshot:
             "is_colab": self.is_colab,
             "packages": [pkg.to_dict() for pkg in self.packages],
             "timestamp": self.timestamp,
-            "snapenv_version": self.snapenv_version,
+            "snapmyenv_version": self.snapmyenv_version,
             "metadata": self.metadata,
         }
     
@@ -83,7 +83,7 @@ class EnvironmentSnapshot:
             is_colab=data["is_colab"],
             packages=packages,
             timestamp=data["timestamp"],
-            snapenv_version=data["snapenv_version"],
+            snapmyenv_version=data["snapmyenv_version"],
             metadata=data.get("metadata", {}),
         )
     

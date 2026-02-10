@@ -1,10 +1,10 @@
-"""Tests for snapenv.restore module."""
+"""Tests for snapmyenv.restore module."""
 
 import pytest
-from snapenv.capture import capture, clear_snapshots
-from snapenv.restore import restore, restore_from_dict
-from snapenv.exceptions import RestoreError
-from snapenv.models import EnvironmentSnapshot, Package
+from snapmyenv.capture import capture, clear_snapshots
+from snapmyenv.restore import restore, restore_from_dict
+from snapmyenv.exceptions import RestoreError
+from snapmyenv.models import EnvironmentSnapshot, Package
 
 
 class TestRestore:
@@ -43,7 +43,7 @@ class TestRestore:
             is_colab=False,
             packages=packages,
             timestamp="2024-01-01T00:00:00Z",
-            snapenv_version="0.1.0",
+            snapmyenv_version="0.1.0",
         )
         
         # Dry run to avoid actual installation

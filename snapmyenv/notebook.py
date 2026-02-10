@@ -12,7 +12,7 @@ from .colab import ensure_jupyter, is_jupyter
 from .exceptions import NotebookError
 
 
-METADATA_KEY = "snapenv_snapshot"
+METADATA_KEY = "snapmyenv_snapshot"
 
 
 def get_notebook_path() -> Optional[Path]:
@@ -113,9 +113,9 @@ def embed(name: str = "default", notebook_path: Optional[str] = None) -> None:
         NotebookError: If notebook operations fail.
         
     Example:
-        >>> import snapenv
-        >>> snapenv.capture("v1")
-        >>> snapenv.embed("v1", "my_notebook.ipynb")
+        >>> import snapmyenv
+        >>> snapmyenv.capture("v1")
+        >>> snapmyenv.embed("v1", "my_notebook.ipynb")
     """
     # Get snapshot
     snapshot = get_snapshot(name)
@@ -131,7 +131,7 @@ def embed(name: str = "default", notebook_path: Optional[str] = None) -> None:
             raise NotebookError(
                 "Could not auto-detect notebook path. "
                 "Please provide notebook_path explicitly:\n"
-                "  snapenv.embed('default', 'my_notebook.ipynb')"
+                "  snapmyenv.embed('default', 'my_notebook.ipynb')"
             )
         nb_path = detected_path
     else:
@@ -158,8 +158,8 @@ def embed(name: str = "default", notebook_path: Optional[str] = None) -> None:
     print(f"  Python: {snapshot.python_version}")
     print()
     print("Others can now restore this environment with:")
-    print("  import snapenv")
-    print("  snapenv.restore_from_nb()")
+    print("  import snapmyenv")
+    print("  snapmyenv.restore_from_nb()")
 
 
 def extract_from_notebook(notebook_path: str) -> Optional[EnvironmentSnapshot]:
@@ -206,8 +206,8 @@ def restore_from_nb(notebook_path: Optional[str] = None, dry_run: bool = False) 
         NotebookError: If notebook operations fail or no snapshot found.
         
     Example:
-        >>> import snapenv
-        >>> snapenv.restore_from_nb("shared_notebook.ipynb")
+        >>> import snapmyenv
+        >>> snapmyenv.restore_from_nb("shared_notebook.ipynb")
     """
     # Determine notebook path
     if notebook_path is None:
@@ -216,7 +216,7 @@ def restore_from_nb(notebook_path: Optional[str] = None, dry_run: bool = False) 
             raise NotebookError(
                 "Could not auto-detect notebook path. "
                 "Please provide notebook_path explicitly:\n"
-                "  snapenv.restore_from_nb('my_notebook.ipynb')"
+                "  snapmyenv.restore_from_nb('my_notebook.ipynb')"
             )
         nb_path = detected_path
     else:
@@ -230,8 +230,8 @@ def restore_from_nb(notebook_path: Optional[str] = None, dry_run: bool = False) 
     
     if snapshot is None:
         raise NotebookError(
-            f"No snapenv snapshot found in {nb_path.name}\n"
-            f"The notebook author needs to call snapenv.embed() first."
+            f"No snapmyenv snapshot found in {nb_path.name}\n"
+            f"The notebook author needs to call snapmyenv.embed() first."
         )
     
     print(f"Found embedded snapshot in {nb_path.name}")

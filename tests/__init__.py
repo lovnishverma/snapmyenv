@@ -1,1 +1,1 @@
-"""Tests for snapenv."""
+"""Tests for snapmyenv."""

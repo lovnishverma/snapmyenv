@@ -76,8 +76,8 @@ def capture(name: str = "default", metadata: Optional[Dict[str, str]] = None) ->
         CaptureError: If capture fails.
         
     Example:
-        >>> import snapenv
-        >>> snapshot = snapenv.capture("my-project")
+        >>> import snapmyenv
+        >>> snapshot = snapmyenv.capture("my-project")
         >>> print(f"Captured {len(snapshot['packages'])} packages")
     """
     if not name or not isinstance(name, str):
@@ -97,7 +97,7 @@ def capture(name: str = "default", metadata: Optional[Dict[str, str]] = None) ->
             is_colab=is_colab(),
             packages=packages,
             timestamp=datetime.utcnow().isoformat() + "Z",
-            snapenv_version=__version__,
+            snapmyenv_version=__version__,
             metadata=metadata or {},
         )
         

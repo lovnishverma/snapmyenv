@@ -81,10 +81,10 @@ def restore(name: str = "default", dry_run: bool = False) -> None:
         RestoreError: If snapshot not found or restoration fails.
         
     Example:
-        >>> import snapenv
-        >>> snapenv.restore("my-project")
+        >>> import snapmyenv
+        >>> snapmyenv.restore("my-project")
         >>> # Or preview changes:
-        >>> snapenv.restore("my-project", dry_run=True)
+        >>> snapmyenv.restore("my-project", dry_run=True)
     """
     # Get snapshot from session storage
     snapshot = get_snapshot(name)
@@ -153,9 +153,9 @@ def restore_from_dict(snapshot_dict: dict, dry_run: bool = False) -> None:
         RestoreError: If snapshot is invalid or restoration fails.
         
     Example:
-        >>> import snapenv
-        >>> snapshot = snapenv.capture("temp")
-        >>> snapenv.restore_from_dict(snapshot)
+        >>> import snapmyenv
+        >>> snapshot = snapmyenv.capture("temp")
+        >>> snapmyenv.restore_from_dict(snapshot)
     """
     try:
         snapshot = EnvironmentSnapshot.from_dict(snapshot_dict)

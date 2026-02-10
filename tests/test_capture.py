@@ -1,8 +1,8 @@
-"""Tests for snapenv.capture module."""
+"""Tests for snapmyenv.capture module."""
 
 import pytest
-from snapenv.capture import capture, get_snapshot, list_snapshots, clear_snapshots
-from snapenv.exceptions import CaptureError
+from snapmyenv.capture import capture, get_snapshot, list_snapshots, clear_snapshots
+from snapmyenv.exceptions import CaptureError
 
 
 class TestCapture:

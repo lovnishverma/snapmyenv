@@ -3,12 +3,12 @@ requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "snapenv"
+name = "snapmyenv"
 version = "0.1.0"
 description = "Snapshot and restore Python environments for reproducible notebooks"
 readme = "README.md"
 authors = [
-    {name = "snapenv contributors"}
+    {name = "snapmyenv contributors"}
 ]
 license = {text = "MIT"}
 classifiers = [
@@ -40,14 +40,14 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/yourusername/snapenv"
-Documentation = "https://github.com/yourusername/snapenv#readme"
-Repository = "https://github.com/yourusername/snapenv"
-"Bug Tracker" = "https://github.com/yourusername/snapenv/issues"
+Homepage = "https://github.com/yourusername/snapmyenv"
+Documentation = "https://github.com/yourusername/snapmyenv#readme"
+Repository = "https://github.com/yourusername/snapmyenv"
+"Bug Tracker" = "https://github.com/yourusername/snapmyenv/issues"
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["snapenv*"]
+include = ["snapmyenv*"]
 exclude = ["tests*"]
 
 [tool.pytest.ini_options]

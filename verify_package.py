@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Verify snapenv package structure and functionality.
+Verify snapmyenv package structure and functionality.
 Run this before building/publishing.
 """
 
@@ -34,7 +34,7 @@ def verify_package_structure():
     all_good &= check_file_exists(root / "LICENSE", "License")
     
     # Package files
-    pkg_root = root / "snapenv"
+    pkg_root = root / "snapmyenv"
     all_good &= check_file_exists(pkg_root / "__init__.py", "Package init")
     all_good &= check_file_exists(pkg_root / "__version__.py", "Version")
     all_good &= check_file_exists(pkg_root / "models.py", "Models")
@@ -61,16 +61,16 @@ def verify_imports():
     try:
         sys.path.insert(0, str(Path(__file__).parent))
         
-        print("Importing snapenv...", end=" ")
-        import snapenv
+        print("Importing snapmyenv...", end=" ")
+        import snapmyenv
         print("✓")
         
-        print(f"Version: {snapenv.__version__}")
+        print(f"Version: {snapmyenv.__version__}")
         
         # Check public API
         api_functions = ["capture", "restore", "embed", "restore_from_nb"]
         for func_name in api_functions:
-            if hasattr(snapenv, func_name):
+            if hasattr(snapmyenv, func_name):
                 print(f"✓ API function: {func_name}")
             else:
                 print(f"✗ MISSING API function: {func_name}")
@@ -91,7 +91,7 @@ def main():
     """Run all verifications."""
     print()
     print("╔" + "═" * 58 + "╗")
-    print("║" + " " * 15 + "SNAPENV VERIFICATION" + " " * 23 + "║")
+    print("║" + " " * 15 + "snapmyenv VERIFICATION" + " " * 23 + "║")
     print("╚" + "═" * 58 + "╝")
     print()
     

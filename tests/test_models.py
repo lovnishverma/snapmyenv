@@ -1,7 +1,7 @@
-"""Tests for snapenv.models module."""
+"""Tests for snapmyenv.models module."""
 
 import pytest
-from snapenv.models import Package, EnvironmentSnapshot
+from snapmyenv.models import Package, EnvironmentSnapshot
 
 
 class TestPackage:
@@ -56,7 +56,7 @@ class TestEnvironmentSnapshot:
             is_colab=False,
             packages=packages,
             timestamp="2024-01-01T00:00:00Z",
-            snapenv_version="0.1.0",
+            snapmyenv_version="0.1.0",
         )
         
         assert snapshot.name == "test"
@@ -75,7 +75,7 @@ class TestEnvironmentSnapshot:
                 is_colab=False,
                 packages=[],
                 timestamp="2024-01-01T00:00:00Z",
-                snapenv_version="0.1.0",
+                snapmyenv_version="0.1.0",
             )
     
     def test_snapshot_to_dict(self):
@@ -91,7 +91,7 @@ class TestEnvironmentSnapshot:
             is_colab=True,
             packages=packages,
             timestamp="2024-01-01T00:00:00Z",
-            snapenv_version="0.1.0",
+            snapmyenv_version="0.1.0",
         )
         
         data = snapshot.to_dict()
@@ -116,7 +116,7 @@ class TestEnvironmentSnapshot:
                 {"name": "pandas", "version": "2.0.0"},
             ],
             "timestamp": "2024-01-01T00:00:00Z",
-            "snapenv_version": "0.1.0",
+            "snapmyenv_version": "0.1.0",
             "metadata": {},
         }
         
@@ -139,7 +139,7 @@ class TestEnvironmentSnapshot:
             is_colab=False,
             packages=packages,
             timestamp="2024-01-01T00:00:00Z",
-            snapenv_version="0.1.0",
+            snapmyenv_version="0.1.0",
         )
         
         json_str = original.to_json()
@@ -167,7 +167,7 @@ class TestEnvironmentSnapshot:
             is_colab=False,
             packages=packages,
             timestamp="2024-01-01T00:00:00Z",
-            snapenv_version="0.1.0",
+            snapmyenv_version="0.1.0",
         )
         
         assert snapshot.get_package_count() == 3
@@ -188,7 +188,7 @@ class TestEnvironmentSnapshot:
             is_colab=False,
             packages=packages,
             timestamp="2024-01-01T00:00:00Z",
-            snapenv_version="0.1.0",
+            snapmyenv_version="0.1.0",
         )
         
         pkg = snapshot.get_package("numpy")
@@ -218,7 +218,7 @@ class TestEnvironmentSnapshot:
             is_colab=True,
             packages=packages,
             timestamp="2024-01-01T00:00:00Z",
-            snapenv_version="0.1.0",
+            snapmyenv_version="0.1.0",
         )
         
         summary = snapshot.format_summary()
