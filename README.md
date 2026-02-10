@@ -7,7 +7,6 @@
 [![PyPI version](https://img.shields.io/pypi/v/snapmyenv.svg)](https://pypi.org/project/snapmyenv/)
 [![Python Versions](https://img.shields.io/pypi/pyversions/snapmyenv.svg)](https://pypi.org/project/snapmyenv/)
 [![License](https://img.shields.io/pypi/l/snapmyenv.svg)](https://github.com/lovnishverma/snapmyenv/blob/main/LICENSE)
-[![Downloads](https://static.pepy.tech/badge/snapmyenv)](https://pepy.tech/project/snapmyenv)
 
 ## Features
 
