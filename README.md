@@ -1,407 +1,284 @@
 # snapmyenv 📸
 
-**Snapshot and restore Python environments for reproducible notebooks**
+**Snapshot and restore Python environments for reproducible notebooks.**
 
-`snapmyenv` is a lightweight library designed for Google Colab and Jupyter users to capture and restore runtime environments, making notebooks fully reproducible. Share your notebooks with confidence knowing others can recreate your exact environment.
+`snapmyenv` is a lightweight, zero-dependency library designed to solve the "it works on my machine" problem for **Google Colab** and **Jupyter Notebooks**. It captures your runtime environment—including Python version, OS details, and exact package versions—and embeds it directly into your notebook's metadata.
+
+Share your notebooks with confidence, knowing others can instantly recreate your exact setup with a single command.
 
 [![PyPI version](https://img.shields.io/pypi/v/snapmyenv.svg)](https://pypi.org/project/snapmyenv/)
 [![Python Versions](https://img.shields.io/pypi/pyversions/snapmyenv.svg)](https://pypi.org/project/snapmyenv/)
 [![License](https://img.shields.io/pypi/l/snapmyenv.svg)](https://github.com/lovnishverma/snapmyenv/blob/main/LICENSE)
+[![Code Style: Black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-## Features
+---
 
-- 📸 **Capture environments** - Snapshot Python version, OS, and all installed packages
-- 🔄 **Restore environments** - Recreate exact package versions from snapshots
-- 📓 **Notebook integration** - Embed snapshots directly in `.ipynb` metadata
-- 🌐 **Colab-friendly** - Designed for Google Colab and local Jupyter
-- 🪶 **Zero dependencies** - No external dependencies beyond Python stdlib
-- 🛡️ **Production-ready** - Clean error handling, validation, and logging
+## 🚀 Key Features
 
-## Installation
+- **📸 Full Environment Capture**: Records Python version, OS/Platform, and all installed `pip` packages.
+- **📓 Notebook Embedding**: Injects dependency snapshots directly into `.ipynb` metadata—making the notebook a self-contained unit.
+- **🌐 Colab Ready**: Includes specific logic to detect and handle Google Colab environments.
+- **🛡️ Zero Dependencies**: Built using only the Python standard library (`sys`, `json`, `subprocess`), so installing it never conflicts with your existing environment.
+- **🔄 Instant Restore**: Reinstall the exact package versions required to run a notebook with a single function call.
+- **⛑️ Safety First**: Includes `dry_run` modes to preview changes before installation.
+
+---
+
+## 📦 Installation
 
 ```bash
-pip install snapmyenv
-```
-
-### **Executive Summary**
-
-`snapmyenv` is a lightweight Python library designed to solve the "it works on my machine" problem for **Google Colab** and **Jupyter Notebooks**. It allows users to capture the current state of a Python environment (libraries, versions, OS info) and embed that "snapshot" directly into a notebook's metadata. This makes the notebook self-reproducible, allowing anyone who opens it to restore the exact environment used by the original author.
-
-### **Key Features**
-
-1. **Environment Capture**: It records the Python version, Operating System details (Platform), and a complete list of installed pip packages with their exact versions.
-2. **Notebook Embedding**: Unlike `requirements.txt` which is a separate file, `snapmyenv` embeds the dependency snapshot directly into the `.ipynb` file's JSON metadata under the key `snapmyenv_snapshot`.
-3. **Restoration**: It can read a snapshot (from memory, a file, or notebook metadata) and reinstall the specific package versions using `pip`.
-4. **Colab Integration**: It includes specific utilities to detect if code is running in Google Colab or a standard Jupyter environment.
-5. **Zero Dependencies**: The library itself has no external dependencies (only uses the Python standard library), making it easy to install without causing dependency conflicts.
-
-### **Technical Architecture**
-
-* **Data Models (`models.py`)**:
-The core data structure is the `EnvironmentSnapshot` dataclass, which holds metadata (timestamp, python version) and a list of `Package` objects. It handles serialization to and from JSON/dict formats.
-* **Capture Mechanism (`capture.py`)**:
-Instead of relying on `pkg_resources` or `importlib.metadata` directly, it spawns a subprocess running `pip list --format=json`. This is a robust way to get the exact list of installed packages as `pip` sees them.
-* **Restore Mechanism (`restore.py`)**:
-Restoration involves iterating through the captured package list and calling `pip install package==version` via subprocess. It includes a `dry_run` mode to preview changes without installing them. It also warns the user if the Python version differs from the snapshot.
-* **Notebook Integration (`notebook.py`)**:
-This module reads the raw JSON of a `.ipynb` file, injects the snapshot dictionary into `metadata["snapmyenv_snapshot"]`, and writes it back to disk. This allows the environment data to travel with the notebook file itself.
-
-### **Code Quality & Best Practices**
-
-* **Modern Packaging**: The project uses `pyproject.toml` for configuration, adhering to modern Python packaging standards (PEP 517/518).
-* **Type Hinting**: The code is fully type-hinted, improving readability and allowing for static analysis.
-* **Testing**: There is a comprehensive test suite using `pytest` located in the `tests/` directory, covering capture, models, and restoration logic.
-* **Safety**: The code includes a verification script (`verify_package.py`) to check structure and imports before distribution.
-
-### **Potential Limitations**
-
-* **Pip Only**: The README explicitly notes it only captures pip-installed packages, not Conda packages or system-level binaries.
-* **Virtual Environments**: It captures the *state* of packages, but does not recreate the virtual environment directory structure itself; it simply installs packages into currently active environment.
-
-### **Use Cases**
-
-* **Research Papers**: Researchers can embed the exact environment used to generate their results into the supplementary notebook files.
-* **Teaching**: Instructors can distribute problem sets with embedded environments so students don't face version mismatch errors.
-* **Debugging**: Developers can capture a "broken" environment state to share with a colleague for troubleshooting.
-
-
-## Quick Start
-
-### Basic Usage
-
-```python
-import snapmyenv
-
-# Capture your current environment
-snapshot = snapmyenv.capture("my-analysis")
-# ✓ Captured environment 'my-analysis'
-#   Python: 3.10.12
-#   Platform: Linux
-#   Packages: 147
-#   Colab: Yes
-
-# Later, restore the exact environment
-snapmyenv.restore("my-analysis")
-# Installing 147 packages...
-# ✓ Restoration complete: 147 succeeded, 0 failed
-```
-
-### Make Notebooks Self-Reproducible
-
-Embed your environment snapshot directly into your notebook:
-
-```python
-# In your notebook:
-import snapmyenv
-
-# 1. Capture environment
-snapmyenv.capture("v1")
-
-# 2. Embed in notebook metadata
-snapmyenv.embed("v1", "my_analysis.ipynb")
-# ✓ Embedded snapshot 'v1' into my_analysis.ipynb
-
-# Now anyone opening your notebook can restore:
-snapmyenv.restore_from_nb("my_analysis.ipynb")
-```
-
-## Google Colab Example
-
-Perfect for sharing reproducible analyses on Colab:
-
-<img width="1596" height="465" alt="image" src="https://github.com/user-attachments/assets/015ef7a1-d7ba-43f6-b488-1ef81ca5d5f2" />
-
-```python
-# At the top of your Colab notebook:
 !pip install snapmyenv
 
+```
 
-# connect google drive
+---
+
+## ⚡ Quick Start
+
+### 1. The "Self-Reproducible" Notebook (Recommended)
+
+The most powerful way to use `snapmyenv` is to embed the environment *inside* the notebook itself.
+
+**User A (The Author):**
+
+```python
+import snapmyenv
+
+# 1. Capture the current environment
+snapmyenv.capture("stable-v1")
+
+# 2. Embed it into the notebook metadata
+snapmyenv.embed("stable-v1", "my_analysis.ipynb")
+# Output: ✓ Embedded snapshot 'stable-v1' into my_analysis.ipynb
+
+```
+
+**User B (The Recipient):**
+
+```python
+import snapmyenv
+
+# Restore the exact environment embedded in the file
+snapmyenv.restore_from_nb("my_analysis.ipynb")
+# Output:
+# Found embedded snapshot in my_analysis.ipynb
+# Installing packages...
+# ✓ Restoration complete.
+
+```
+
+---
+
+## 🎓 Google Colab Guide
+
+Using `snapmyenv` in Google Colab requires one extra step: **mounting Google Drive**. Since Colab instances are temporary, you must save the notebook to your Drive to persist the embedded environment snapshot.
+
+### Step 1: Install & Mount Drive
+
+Run this at the top of your notebook to install the library and give it access to save the file.
+
+```python
+!pip install snapmyenv
+
+from google.colab import drive
+import snapmyenv
+
+# Mount Google Drive so we can save the notebook file
+drive.mount('/content/drive')
+
+```
+
+### Step 2: Capture & Embed
+
+Once your analysis is working perfectly, capture the environment and embed it into the notebook file sitting on your Drive.
+
+```python
+# 1. Capture the current Colab environment
+snapmyenv.capture("final-submission")
+
+# 2. Embed it into your notebook file (adjust the path to match your file)
+notebook_path = "/content/drive/MyDrive/Colab Notebooks/my_analysis.ipynb"
+snapmyenv.embed("final-submission", notebook_path)
+
+print("✅ Environment saved! You can now share this notebook.")
+
+```
+
+### Step 3: Restoring (For Others)
+
+When someone else opens your notebook, they can restore your exact environment—even if Colab has updated its default packages since you wrote the code.
+
+```python
+!pip install snapmyenv
+import snapmyenv
 from google.colab import drive
 drive.mount('/content/drive')
 
-import snapmyenv
+# Restore the environment from the notebook itself
+snapmyenv.restore_from_nb("/content/drive/MyDrive/Colab Notebooks/my_analysis.ipynb")
 
-# Capture your carefully crafted environment
-snapmyenv.capture("colab-analysis-v1")
-
-# Save it to your notebook
-snapmyenv.embed("colab-analysis-v1", "/content/drive/MyDrive/Colab Notebooks/analysis.ipynb")
 ```
 
-<img width="1037" height="560" alt="image" src="https://github.com/user-attachments/assets/2b9c1a05-c84f-4baf-8993-763e3de4923f" />
+---
 
+## 📖 API Reference
 
+### `capture(name="default", metadata=None) -> dict`
 
-When someone else opens your notebook:
+Captures the current Python environment state in memory.
+
+* **name** (`str`): Unique identifier for the snapshot.
+* **metadata** (`dict`): Optional dictionary of extra info (e.g., `{'author': 'Jane', 'experiment': '42'}`).
+* **Returns**: A dictionary containing the snapshot data.
+
+### `embed(name="default", notebook_path=None) -> None`
+
+Writes a captured snapshot into the JSON metadata of a `.ipynb` file.
+
+* **name** (`str`): Name of the snapshot to embed.
+* **notebook_path** (`str`): Path to the notebook. If running in Jupyter, it attempts to auto-detect the path.
+
+### `restore(name="default", dry_run=False) -> None`
+
+Restores an environment from a snapshot currently held in memory.
+
+* **name** (`str`): Name of the snapshot to restore.
+* **dry_run** (`bool`): If `True`, prints the list of packages that *would* be installed without actually installing them.
+
+### `restore_from_nb(notebook_path=None, dry_run=False) -> None`
+
+Reads a snapshot *from* a notebook file's metadata and restores it.
+
+* **notebook_path** (`str`): Path to the notebook file.
+* **dry_run** (`bool`): Preview changes without installing.
+
+---
+
+## 🔍 What Actually Gets Captured?
+
+Unlike `pip freeze`, `snapmyenv` captures the full context required for debugging environment issues:
+
+| Data Point | Description |
+| --- | --- |
+| **Python Version** | e.g., `3.10.12` (Major.Minor.Patch) |
+| **Platform** | e.g., `Linux-5.15.0-generic` |
+| **Architecture** | e.g., `x86_64` |
+| **Packages** | Complete list of `pip` packages with pinned versions |
+| **Colab Flag** | Boolean flag indicating if the snapshot originated in Colab |
+| **Timestamp** | UTC timestamp of capture |
+
+---
+
+## 🛠️ Advanced Usage
+
+### Dry Run (Preview Changes)
+
+Before modifying your environment, see exactly what will change:
 
 ```python
-import snapmyenv
+snapmyenv.restore_from_nb("analysis.ipynb", dry_run=True)
+# Output:
+# [DRY RUN] Would install:
+#   numpy==1.24.3
+#   pandas==2.0.1
 
-# Restore the exact environment
-snapmyenv.restore_from_nb("/content/drive/MyDrive/Colab Notebooks/analysis.ipynb")
 ```
 
-<img width="971" height="506" alt="image" src="https://github.com/user-attachments/assets/9e0d8fe7-9130-4ad6-8273-6bb04702fc16" />
+### Save/Load Snapshots to JSON
 
-
-## API Reference
-
-### `capture(name: str = "default", metadata: dict = None) -> dict`
-
-Capture the current Python environment.
-
-**Parameters:**
-- `name` (str): Name for this snapshot (default: "default")
-- `metadata` (dict): Optional metadata to store with snapshot
-
-**Returns:**
-- Dictionary containing snapshot data
-
-**Example:**
-```python
-snapshot = snapmyenv.capture("my-project", metadata={"author": "Alice"})
-```
-
-### `restore(name: str = "default", dry_run: bool = False) -> None`
-
-Restore environment from a previously captured snapshot.
-
-**Parameters:**
-- `name` (str): Name of snapshot to restore (default: "default")
-- `dry_run` (bool): If True, show what would be installed without installing
-
-**Example:**
-```python
-# Preview what would be installed
-snapmyenv.restore("my-project", dry_run=True)
-
-# Actually restore
-snapmyenv.restore("my-project")
-```
-
-### `embed(name: str = "default", notebook_path: str = None) -> None`
-
-Embed snapshot into Jupyter notebook metadata.
-
-**Parameters:**
-- `name` (str): Name of snapshot to embed (default: "default")
-- `notebook_path` (str): Path to notebook file (optional, auto-detected in some environments)
-
-**Example:**
-```python
-snapmyenv.embed("v1", "analysis.ipynb")
-```
-
-### `restore_from_nb(notebook_path: str = None, dry_run: bool = False) -> None`
-
-Restore environment from notebook-embedded snapshot.
-
-**Parameters:**
-- `notebook_path` (str): Path to notebook file (optional, auto-detected in some environments)
-- `dry_run` (bool): If True, show what would be installed without installing
-
-**Example:**
-```python
-snapmyenv.restore_from_nb("shared_analysis.ipynb")
-```
-
-## What Gets Captured?
-
-Each snapshot includes:
-
-- **Python version** - Major, minor, and patch version
-- **Platform information** - OS, release, and machine architecture
-- **All installed packages** - With exact version numbers
-- **Colab detection** - Whether running in Google Colab
-- **Timestamp** - When snapshot was created
-- **Custom metadata** - Any additional information you provide
-
-## Use Cases
-
-### 1. Reproducible Research
+If you prefer file-based management over notebook embedding:
 
 ```python
-# At the start of your research
-import snapmyenv
-snapmyenv.capture("paper-v1")
-
-# ... months of analysis ...
-
-# Before submission, embed in your analysis notebook
-snapmyenv.embed("paper-v1", "analysis.ipynb")
-```
-
-### 2. Teaching & Tutorials
-
-```python
-# Create a tutorial notebook with specific package versions
-snapmyenv.capture("tutorial-2024")
-snapmyenv.embed("tutorial-2024", "lesson.ipynb")
-
-# Students can restore the exact environment
-snapmyenv.restore_from_nb("lesson.ipynb")
-```
-
-### 3. Team Collaboration
-
-```python
-# Team member A captures their working environment
-snapmyenv.capture("project-stable")
-snapshot = snapmyenv.capture("project-stable")
-
-# Share the snapshot dict via git, email, etc.
-# Team member B restores it
-snapmyenv.restore_from_dict(snapshot)
-```
-
-### 4. Environment Debugging
-
-```python
-# When something works on one machine but not another
-snapmyenv.capture("working-config")
-
-# On the broken machine, compare:
-snapmyenv.restore("working-config", dry_run=True)
-```
-
-## Advanced Usage
-
-### Preview Changes (Dry Run)
-
-```python
-# See what would be installed without actually installing
-snapmyenv.restore("my-project", dry_run=True)
-```
-
-### Multiple Snapshots
-
-```python
-# Capture different configurations
-snapmyenv.capture("dev")
-snapmyenv.capture("production")
-snapmyenv.capture("minimal")
-
-# Switch between them
-snapmyenv.restore("production")
-```
-
-### Working with Snapshot Data
-
-```python
-# Get the snapshot dictionary
-snapshot = snapmyenv.capture("test")
-
-# Access snapshot details
-print(f"Python version: {snapshot['python_version']}")
-print(f"Package count: {len(snapshot['packages'])}")
-print(f"Created: {snapshot['timestamp']}")
-
-# Save to file
 import json
-with open("snapshot.json", "w") as f:
+import snapmyenv
+
+# Save to JSON
+snapshot = snapmyenv.capture("production")
+with open("env_snapshot.json", "w") as f:
     json.dump(snapshot, f, indent=2)
 
-# Restore from file later
-with open("snapshot.json", "r") as f:
-    loaded = json.load(f)
-snapmyenv.restore_from_dict(loaded)
+# Load from JSON
+with open("env_snapshot.json", "r") as f:
+    data = json.load(f)
+snapmyenv.restore_from_dict(data)
+
 ```
 
-## Error Handling
+---
 
-`snapmyenv` provides informative error messages and graceful degradation:
+## 💻 Development
 
-```python
-try:
-    snapmyenv.restore("my-project")
-except snapmyenv.RestoreError as e:
-    print(f"Restoration failed: {e}")
-```
+### Setup
 
-**Common scenarios:**
-- Python version mismatches → Warning issued, continues with installation
-- Package installation failures → Individual packages skipped with warnings
-- Missing snapshots → Clear error message with available snapshot names
-
-## Limitations
-
-- **Package sources**: Only captures pip-installed packages (not conda, system packages, etc.)
-- **Binary dependencies**: Cannot capture system libraries or non-Python dependencies
-- **Platform differences**: Snapshots capture platform info but cannot enforce it
-- **Version conflicts**: Some package combinations may be impossible to install together
-
-## Development
-
-### Setup Development Environment
+Clone the repository and install it in editable mode with development dependencies:
 
 ```bash
 git clone https://github.com/lovnishverma/snapmyenv.git
 cd snapmyenv
 pip install -e ".[dev]"
+
 ```
 
-### Run Tests
+### Verification Script
+
+The project includes a built-in verification script to check package structure and imports before building. Always run this before submitting a PR:
+
+```bash
+python verify_package.py
+
+```
+
+### Testing
+
+Run the comprehensive test suite using `pytest`:
 
 ```bash
 pytest
+# Or with coverage report
 pytest --cov=snapmyenv --cov-report=html
+
 ```
-
-### Code Quality
-
-```bash
-black snapmyenv tests
-ruff check snapmyenv tests
-mypy snapmyenv
-```
-
-## Contributing
-
-Contributions are welcome! Please:
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Make your changes with tests
-4. Run the test suite
-5. Submit a pull request
-
-## License
-
-MIT License - see [LICENSE](LICENSE) file for details.
-
-## FAQ
-
-**Q: Does this work outside of Jupyter/Colab?**  
-A: Yes! The core capture/restore functionality works in any Python environment. The notebook features require Jupyter.
-
-**Q: Can I use this in production applications?**  
-A: `snapmyenv` is designed for notebooks and development workflows. For production, consider Docker, conda environments, or proper dependency management tools.
-
-**Q: What if a package version isn't available anymore?**  
-A: `snapmyenv` will warn you and skip that package, installing everything else that's available.
-
-**Q: Does this capture virtual environment state?**  
-A: No, it captures installed packages regardless of whether you're in a venv. It's meant for recreating package sets, not virtual environment structure.
-
-**Q: How is this different from `pip freeze`?**  
-A: `snapmyenv` adds platform/Python version tracking, Jupyter integration, user-friendly interfaces, and graceful error handling. It's specifically designed for notebook reproducibility.
-
-## Changelog
-
-### v0.1.0 (2024)
-- Initial release
-- Core capture/restore functionality
-- Notebook metadata embedding
-- Google Colab support
-- Comprehensive test suite
-
-## Support
-
-- 📧 **Issues**: [GitHub Issues](https://github.com/lovnishverma/snapmyenv/issues)
-- 💬 **Discussions**: [GitHub Discussions](https://github.com/lovnishverma/snapmyenv/discussions)
-- 📖 **Documentation**: [README](https://github.com/lovnishverma/snapmyenv#readme)
 
 ---
 
-Made with ❤️ for the Jupyter and Google Colab community
+## ⚠️ Limitations
+
+* **Pip Only**: Currently captures standard `pip` packages. Does not support Conda-specific packages or system-level binaries (apt/brew).
+* **Virtual Environments**: Captures the *state* of packages (versions), not the virtual environment folder structure itself.
+* **Cross-Platform**: While `snapmyenv` records the OS, it cannot guarantee that a package compiled for Linux will have a matching version available for Windows.
+
+---
+
+## 📄 Changelog
+
+### v0.1.4
+
+* Enhanced notebook path detection.
+* Improved metadata serialization.
+* Added `verify_package.py` for build validation.
+
+### v0.1.0
+
+* Initial release.
+* Core capture/restore functionality.
+* Google Colab support.
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Please:
+
+1. Fork the repository.
+2. Create a feature branch (`git checkout -b feature/amazing-feature`).
+3. Commit your changes.
+4. Run `python verify_package.py` to ensure integrity.
+5. Open a Pull Request.
+
+## 📄 License
+
+MIT License - see [LICENSE](https://www.google.com/search?q=LICENSE) file for details.
+
+---
+
+Made with ❤️ by Lovnish Verma for the Jupyter and Google Colab community
