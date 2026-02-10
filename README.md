@@ -4,9 +4,10 @@
 
 `snapmyenv` is a lightweight library designed for Google Colab and Jupyter users to capture and restore runtime environments, making notebooks fully reproducible. Share your notebooks with confidence knowing others can recreate your exact environment.
 
-[![PyPI version](https://badge.fury.io/py/snapmyenv.svg)](https://badge.fury.io/py/snapmyenv)
-[![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![PyPI version](https://img.shields.io/pypi/v/snapmyenv.svg)](https://pypi.org/project/snapmyenv/)
+[![Python Versions](https://img.shields.io/pypi/pyversions/snapmyenv.svg)](https://pypi.org/project/snapmyenv/)
+[![License](https://img.shields.io/pypi/l/snapmyenv.svg)](https://github.com/lovnishverma/snapmyenv/blob/main/LICENSE)
+[![Downloads](https://static.pepy.tech/badge/snapmyenv)](https://pepy.tech/project/snapmyenv)
 
 ## Features
 
