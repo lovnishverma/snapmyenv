@@ -35,7 +35,7 @@ from .capture import capture
 from .restore import restore
 from .notebook import embed, restore_from_nb
 from .exceptions import (
-    snapmyenvError,
+    SnapmyenvError,
     CaptureError,
     RestoreError,
     NotebookError,
@@ -56,7 +56,7 @@ __all__ = [
     "restore_from_nb",
     
     # Exceptions
-    "snapmyenvError",
+    "SnapmyenvError",
     "CaptureError",
     "RestoreError",
     "NotebookError",

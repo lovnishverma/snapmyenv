@@ -1,4 +1,4 @@
-"""Custom exceptions for Snapmyenv."""
+"""Custom exceptions for snapmyenv."""
 
 
 class SnapmyenvError(Exception):
