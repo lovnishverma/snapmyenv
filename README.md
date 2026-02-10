@@ -111,8 +111,7 @@ snapmyenv.restore_from_nb("my_analysis.ipynb")
 
 Perfect for sharing reproducible analyses on Colab:
 
-<img width="1592" height="470" alt="image" src="https://github.com/user-attachments/assets/636e9673-f5c5-4038-a123-58f2bc6f9712" />
-
+<img width="1596" height="465" alt="image" src="https://github.com/user-attachments/assets/015ef7a1-d7ba-43f6-b488-1ef81ca5d5f2" />
 
 ```python
 # At the top of your Colab notebook:
