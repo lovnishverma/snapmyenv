@@ -2,11 +2,13 @@
 
 import sys
 import subprocess
+import tempfile
 import warnings
-from typing import List, Optional, Set
+import os
+from typing import List, Optional
 
 from .models import EnvironmentSnapshot, Package
-from .capture import get_snapshot
+from .capture import get_snapshot, list_snapshots
 from .exceptions import RestoreError
 
 
@@ -30,48 +32,104 @@ def check_python_version(snapshot: EnvironmentSnapshot) -> None:
         )
 
 
-def install_package(package: Package, dry_run: bool = False) -> bool:
+def batch_install_packages(packages: List[Package], dry_run: bool = False) -> bool:
     """
-    Install a single package.
+    Install multiple packages in a single pip call for performance.
     
     Args:
-        package: Package to install.
+        packages: List of packages to install.
         dry_run: If True, only print what would be installed.
         
     Returns:
-        True if installation succeeded (or dry_run), False otherwise.
+        True if installation succeeded, False otherwise.
     """
-    package_spec = f"{package.name}=={package.version}"
+    if not packages:
+        return True
+
+    # Prepare requirements content
+    requirements = [f"{pkg.name}=={pkg.version}" for pkg in packages]
     
     if dry_run:
-        print(f"  [DRY RUN] Would install: {package_spec}")
+        print("  [DRY RUN] Would install the following packages:")
+        for req in requirements:
+            print(f"    {req}")
         return True
     
+    # Use a temporary file to avoid command line length limits
+    with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.txt') as tmp_req:
+        tmp_req.write("\n".join(requirements))
+        tmp_req_path = tmp_req.name
+
     try:
+        print("  Running pip install...")
+        # Run pip install -r temp_file
         result = subprocess.run(
-            [sys.executable, "-m", "pip", "install", "--quiet", package_spec],
+            [sys.executable, "-m", "pip", "install", "-r", tmp_req_path],
             capture_output=True,
             text=True,
-            timeout=120,
+            # Timeout scaled by number of packages (30s per package avg)
+            timeout=30 + (10 * len(packages)), 
         )
         
         if result.returncode == 0:
             return True
         else:
-            warnings.warn(f"Failed to install {package_spec}: {result.stderr}")
+            # If batch install fails, we warn and provide output
+            warnings.warn(f"Batch installation failed: {result.stderr}")
+            print(f"Stdout: {result.stdout}")
             return False
             
     except subprocess.TimeoutExpired:
-        warnings.warn(f"Timeout installing {package_spec}")
+        warnings.warn("Timeout during batch installation")
         return False
     except Exception as e:
-        warnings.warn(f"Error installing {package_spec}: {e}")
+        warnings.warn(f"Error during batch installation: {e}")
         return False
+    finally:
+        # Clean up temp file
+        if os.path.exists(tmp_req_path):
+            os.unlink(tmp_req_path)
+
+
+def restore_snapshot(snapshot: EnvironmentSnapshot, dry_run: bool = False) -> None:
+    """
+    Internal logic to restore a specific snapshot object.
+    
+    Args:
+        snapshot: The snapshot object to restore.
+        dry_run: If True, preview changes only.
+    """
+    print(f"{'[DRY RUN] ' if dry_run else ''}Restoring environment '{snapshot.name}'")
+    print(snapshot.format_summary())
+    print()
+    
+    # Check Python version
+    check_python_version(snapshot)
+    
+    total = len(snapshot.packages)
+    
+    if dry_run:
+        print(f"Processing {total} packages...")
+    else:
+        print(f"Installing {total} packages (this may take a moment)...")
+    
+    # Perform batch installation
+    success = batch_install_packages(snapshot.packages, dry_run=dry_run)
+    
+    print()
+    if dry_run:
+        print(f"✓ Dry run complete: {total} packages processed")
+    else:
+        if success:
+            print(f"✓ Restoration complete: {total} packages installed successfully.")
+        else:
+            print("✗ Restoration failed. Check warnings above.")
+            raise RestoreError("Failed to install packages.")
 
 
 def restore(name: str = "default", dry_run: bool = False) -> None:
     """
-    Restore environment from a previously captured snapshot.
+    Restore environment from a previously captured snapshot in the session.
     
     Args:
         name: Name of the snapshot to restore (default: "default").
@@ -79,12 +137,6 @@ def restore(name: str = "default", dry_run: bool = False) -> None:
         
     Raises:
         RestoreError: If snapshot not found or restoration fails.
-        
-    Example:
-        >>> import snapmyenv
-        >>> snapmyenv.restore("my-project")
-        >>> # Or preview changes:
-        >>> snapmyenv.restore("my-project", dry_run=True)
     """
     # Get snapshot from session storage
     snapshot = get_snapshot(name)
@@ -95,50 +147,7 @@ def restore(name: str = "default", dry_run: bool = False) -> None:
             f"Available snapshots: {', '.join(get_snapshot_names()) or 'none'}"
         )
     
-    print(f"{'[DRY RUN] ' if dry_run else ''}Restoring environment '{name}'")
-    print(snapshot.format_summary())
-    print()
-    
-    # Check Python version
-    check_python_version(snapshot)
-    
-    # Install packages
-    total = len(snapshot.packages)
-    succeeded = 0
-    failed = 0
-    
-    if dry_run:
-        print(f"Would install {total} packages:")
-    else:
-        print(f"Installing {total} packages...")
-    
-    for i, package in enumerate(snapshot.packages, 1):
-        if not dry_run:
-            print(f"  [{i}/{total}] {package.name}=={package.version}", end="")
-        
-        success = install_package(package, dry_run=dry_run)
-        
-        if success:
-            succeeded += 1
-            if not dry_run:
-                print(" ✓")
-        else:
-            failed += 1
-            if not dry_run:
-                print(" ✗")
-    
-    print()
-    if dry_run:
-        print(f"✓ Dry run complete: {total} packages would be installed")
-    else:
-        print(f"✓ Restoration complete: {succeeded} succeeded, {failed} failed")
-        
-        if failed > 0:
-            warnings.warn(
-                f"{failed} packages failed to install. "
-                f"Check warnings above for details.",
-                UserWarning
-            )
+    restore_snapshot(snapshot, dry_run=dry_run)
 
 
 def restore_from_dict(snapshot_dict: dict, dry_run: bool = False) -> None:
@@ -151,27 +160,13 @@ def restore_from_dict(snapshot_dict: dict, dry_run: bool = False) -> None:
         
     Raises:
         RestoreError: If snapshot is invalid or restoration fails.
-        
-    Example:
-        >>> import snapmyenv
-        >>> snapshot = snapmyenv.capture("temp")
-        >>> snapmyenv.restore_from_dict(snapshot)
     """
     try:
         snapshot = EnvironmentSnapshot.from_dict(snapshot_dict)
     except Exception as e:
         raise RestoreError(f"Invalid snapshot data: {e}")
     
-    # Temporarily store snapshot for restoration
-    from .capture import _SNAPSHOTS
-    temp_name = f"_restore_temp_{id(snapshot_dict)}"
-    _SNAPSHOTS[temp_name] = snapshot
-    
-    try:
-        restore(temp_name, dry_run=dry_run)
-    finally:
-        # Clean up temporary snapshot
-        _SNAPSHOTS.pop(temp_name, None)
+    restore_snapshot(snapshot, dry_run=dry_run)
 
 
 def get_snapshot_names() -> List[str]:
@@ -181,5 +176,4 @@ def get_snapshot_names() -> List[str]:
     Returns:
         List of snapshot names.
     """
-    from .capture import list_snapshots
     return list_snapshots()

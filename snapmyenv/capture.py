@@ -3,7 +3,7 @@
 import sys
 import platform
 import subprocess
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, List, Optional
 import warnings
 
@@ -74,11 +74,6 @@ def capture(name: str = "default", metadata: Optional[Dict[str, str]] = None) ->
         
     Raises:
         CaptureError: If capture fails.
-        
-    Example:
-        >>> import snapmyenv
-        >>> snapshot = snapmyenv.capture("my-project")
-        >>> print(f"Captured {len(snapshot['packages'])} packages")
     """
     if not name or not isinstance(name, str):
         raise CaptureError("Snapshot name must be a non-empty string")
@@ -88,6 +83,9 @@ def capture(name: str = "default", metadata: Optional[Dict[str, str]] = None) ->
         packages = get_installed_packages()
         
         # Create snapshot
+        # FIX: Use datetime.now(timezone.utc) instead of deprecated utcnow()
+        timestamp = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
+        
         snapshot = EnvironmentSnapshot(
             name=name,
             python_version=f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}",
@@ -96,7 +94,7 @@ def capture(name: str = "default", metadata: Optional[Dict[str, str]] = None) ->
             platform_machine=platform.machine(),
             is_colab=is_colab(),
             packages=packages,
-            timestamp=datetime.utcnow().isoformat() + "Z",
+            timestamp=timestamp,
             snapmyenv_version=__version__,
             metadata=metadata or {},
         )

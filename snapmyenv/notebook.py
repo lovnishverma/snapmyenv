@@ -35,19 +35,6 @@ def get_notebook_path() -> Optional[Path]:
             if hasattr(session, 'filename'):
                 return Path(session.filename)
         
-        # Try alternative methods
-        try:
-            import ipykernel
-            from notebook.notebookapp import list_running_servers
-            
-            # This is tricky and may not always work
-            kernel_id = ipython.kernel.session.key.decode()
-            for server in list_running_servers():
-                # Would need to match kernel to notebook
-                pass
-        except:
-            pass
-        
         return None
         
     except Exception:
@@ -111,11 +98,6 @@ def embed(name: str = "default", notebook_path: Optional[str] = None) -> None:
         
     Raises:
         NotebookError: If notebook operations fail.
-        
-    Example:
-        >>> import snapmyenv
-        >>> snapmyenv.capture("v1")
-        >>> snapmyenv.embed("v1", "my_notebook.ipynb")
     """
     # Get snapshot
     snapshot = get_snapshot(name)
@@ -204,10 +186,6 @@ def restore_from_nb(notebook_path: Optional[str] = None, dry_run: bool = False) 
         
     Raises:
         NotebookError: If notebook operations fail or no snapshot found.
-        
-    Example:
-        >>> import snapmyenv
-        >>> snapmyenv.restore_from_nb("shared_notebook.ipynb")
     """
     # Determine notebook path
     if notebook_path is None:
