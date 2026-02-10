@@ -111,6 +111,9 @@ snapmyenv.restore_from_nb("my_analysis.ipynb")
 
 Perfect for sharing reproducible analyses on Colab:
 
+<img width="1592" height="470" alt="image" src="https://github.com/user-attachments/assets/636e9673-f5c5-4038-a123-58f2bc6f9712" />
+
+
 ```python
 # At the top of your Colab notebook:
 !pip install snapmyenv
@@ -124,6 +127,10 @@ snapmyenv.capture("colab-analysis-v1")
 snapmyenv.embed("colab-analysis-v1", "/content/drive/MyDrive/analysis.ipynb")
 ```
 
+<img width="1037" height="560" alt="image" src="https://github.com/user-attachments/assets/2b9c1a05-c84f-4baf-8993-763e3de4923f" />
+
+
+
 When someone else opens your notebook:
 
 ```python
@@ -132,6 +139,9 @@ import snapmyenv
 # Restore the exact environment
 snapmyenv.restore_from_nb("/content/drive/MyDrive/analysis.ipynb")
 ```
+
+<img width="971" height="506" alt="image" src="https://github.com/user-attachments/assets/9e0d8fe7-9130-4ad6-8273-6bb04702fc16" />
+
 
 ## API Reference
 
