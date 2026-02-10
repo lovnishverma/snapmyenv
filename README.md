@@ -117,13 +117,18 @@ Perfect for sharing reproducible analyses on Colab:
 # At the top of your Colab notebook:
 !pip install snapmyenv
 
+
+# connect google drive
+from google.colab import drive
+drive.mount('/content/drive')
+
 import snapmyenv
 
 # Capture your carefully crafted environment
 snapmyenv.capture("colab-analysis-v1")
 
 # Save it to your notebook
-snapmyenv.embed("colab-analysis-v1", "/content/drive/MyDrive/analysis.ipynb")
+snapmyenv.embed("colab-analysis-v1", "/content/drive/MyDrive/Colab Notebooks/analysis.ipynb")
 ```
 
 <img width="1037" height="560" alt="image" src="https://github.com/user-attachments/assets/2b9c1a05-c84f-4baf-8993-763e3de4923f" />
@@ -136,7 +141,7 @@ When someone else opens your notebook:
 import snapmyenv
 
 # Restore the exact environment
-snapmyenv.restore_from_nb("/content/drive/MyDrive/analysis.ipynb")
+snapmyenv.restore_from_nb("/content/drive/MyDrive/Colab Notebooks/analysis.ipynb")
 ```
 
 <img width="971" height="506" alt="image" src="https://github.com/user-attachments/assets/9e0d8fe7-9130-4ad6-8273-6bb04702fc16" />
