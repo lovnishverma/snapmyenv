@@ -277,7 +277,7 @@ Contributions are welcome! Please:
 
 ## 📄 License
 
-MIT License - see [LICENSE](https://www.google.com/search?q=LICENSE) file for details.
+MIT License - see [LICENSE](https://github.com/lovnishverma/snapmyenv/blob/main/LICENSE) file for details.
 
 ---
 
