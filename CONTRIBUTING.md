@@ -1,12 +1,3 @@
-Here are the `CONTRIBUTING.md` and `CODE_OF_CONDUCT.md` files tailored for **snapmyenv**.
-
-I have customized the Contributing guide to match the development workflow found in your `pyproject.toml` and `README.md` (specifically referencing `pytest`, `black`, `ruff`, and your custom `verify_package.py` script).
-
-### 1. CONTRIBUTING.md
-
-Create a file named `CONTRIBUTING.md` in the root of your repository and paste this content:
-
-```markdown
 # Contributing to snapmyenv
 
 Thank you for your interest in contributing to `snapmyenv`! We welcome contributions from everyone, whether it's reporting a bug, suggesting a feature, or writing code.
