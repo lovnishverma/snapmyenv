@@ -10,7 +10,6 @@ Share your notebooks with confidence, knowing others can instantly recreate your
 [![Python Versions](https://img.shields.io/pypi/pyversions/snapmyenv.svg)](https://pypi.org/project/snapmyenv/)
 [![License](https://img.shields.io/pypi/l/snapmyenv.svg)](https://github.com/lovnishverma/snapmyenv/blob/main/LICENSE)
 [![Code Style: Black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
-[![status](https://joss.theoj.org/papers/bc73a329378021708ff39689a89c6583/status.svg)](https://joss.theoj.org/papers/bc73a329378021708ff39689a89c6583)
 
 ---
 
